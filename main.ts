@@ -51,13 +51,18 @@ Deno.serve( async (req: Request) => {
 
     if (!accountId) throw 'should provide ?accountId='
 
-    const balanceResult = await getICPBalance(accountId);
-    const factor = BigInt(10 ** balanceResult.decimals);
-    const icpBalance = BigInt(balanceResult.value);
-    const icpBalanceFixedPoint = Number(icpBalance / factor).toFixed(balanceResult.decimals);
+    const it = await getICPBalance(accountId);
+    const xit = BigInt(it.value);
+
+    const [ixit, uxit] = [
+      xit / BigInt(it.decimals * 10**8),
+      xit.toString().padStart(8, '0')
+    ];
+
+    const zit = `${ixit}.${uxit} ${it.currency}`;
 
     return cors(
         req,
-        new Response(icpBalanceFixedPoint)
+        new Response(zit)
     );
 });
